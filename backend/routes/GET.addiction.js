@@ -19,6 +19,8 @@ router.get("/", async (req, res) => {
 
         const result = await pool.query(query, values);
 
+        if (result.rows.length === 0) return res.status(404).json({ error: "No results found." });
+
         return res.json(result.rows);
     } catch (err) {
         console.error(err.message);

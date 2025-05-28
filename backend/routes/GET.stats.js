@@ -23,11 +23,6 @@ router.get("/", async (req, res) => {
             health_issues_count: `
                 SELECT COUNT(*) FILTER (WHERE has_health_issues = true) AS value
                 FROM addiction`,
-            mental_health_distribution: `
-                SELECT mental_health_status, COUNT(*) AS count
-                FROM addiction
-                GROUP BY mental_health_status
-                ORDER BY count DESC`,
         };
 
         const multiRowQueries = ["mental_health_distribution"];

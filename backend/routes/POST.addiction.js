@@ -22,7 +22,7 @@ router.post("/", async (req, res) => {
 
         console.log("(>) Executing query:", query, "\n\twith values:", values);
         const result = await pool.query(query, values);
-        return res.json(result.rows[0]);
+        return res.json(result.rows);
     } catch (err) {
         console.error(err.message);
         return res.status(500).json({ error: "(!) Server error" });
