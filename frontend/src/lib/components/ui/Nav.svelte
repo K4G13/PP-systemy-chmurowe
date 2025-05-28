@@ -55,7 +55,7 @@
                 <SunIcon class="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0"/>
                 <MoonIcon class="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100"/>
             </Button>
-            <Button variant="outline" onclick={() => get_addictions()}>GET_ALL</Button>
+            <Button variant="outline" class="text-red-500" onclick={() => get_addictions()}>GET_ALL (SLOW)</Button>
             <Button variant="outline" onclick={() => get_addictions(50)}>GET_TOP50</Button>
             <Button variant="outline" onclick={() => get_stats()}>GET_STATS</Button>
             <Button variant="outline" onclick={() => get_addiction(get_form_data())}>GET_wPARAMS</Button>

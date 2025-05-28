@@ -7,10 +7,13 @@
 </script>
 
 <Nav/>
-{#if $table_data.length == 0 }
-<span class="grid place-items-center h-[600px]">🔥 click buttons above 🔥</span>
+
+{#if $table_data_loading}
+    <span class="grid place-items-center h-[600px] border-1">Loading...</span>
+{:else if $table_data.length == 0}
+    <span class="grid place-items-center h-[600px]">🔥🔥🔥</span>
 {:else}
-    <Table.Root class="max-h-[600px] block m-2">
+    <Table.Root class="max-h-[600px] block m-2 mt-0">
         <Table.Header class="border-b-2">
             <Table.Row>
                 {#each Object.keys($table_data[0]) as key}
