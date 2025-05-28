@@ -23,6 +23,9 @@ router.put("/", async (req, res) => {
 
         console.log("(>) Executing query:", query, "\n\twith values:", values);
         const result = await pool.query(query, values);
+
+        if (result.rowCount === 0) return res.status(404).json({ error: "Addiction record not found." });
+
         return res.json(result.rows[0]);
     } catch (err) {
         console.error(err.message);
