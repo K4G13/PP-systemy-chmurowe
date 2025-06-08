@@ -13,7 +13,7 @@ table:      addiction
 ### Create postgresql database
 
 ```
-> psql -u postgres
+> psql -U postgres
 > CREATE DATABASE kaggle_data;
 > \q
 ```
