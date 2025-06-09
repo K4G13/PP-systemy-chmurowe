@@ -1,0 +1,60 @@
+- hosts: all
+  become: yes
+  tasks:
+      - name: Install curl
+        apt:
+            name: curl
+            state: present
+            update_cache: yes
+
+      - name: Add NodeSource Node.js 20.x repo
+        shell: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+        args:
+            executable: /bin/bash
+
+      - name: Install Node.js
+        apt:
+            name: nodejs
+            state: present
+            update_cache: yes
+
+      - name: Install nginx
+        apt:
+            name: nginx
+            state: present
+
+      - name: Start nginx
+        service:
+            name: nginx
+            state: started
+            enabled: yes
+
+      - name: Install frontend dependencies
+        shell: npm install --no-optional
+        args:
+            chdir: /home/vagrant/frontend
+
+      - name: Reinstall rollup with platform-specific binaries
+        shell: npm install rollup --force
+        args:
+            chdir: /home/vagrant/frontend
+
+      - name: Build Svelte frontend
+        shell: npm run build
+        args:
+            chdir: /home/vagrant/frontend
+
+      - name: Copy built frontend to nginx www
+        copy:
+            src: /home/vagrant/frontend/build/
+            dest: /var/www/html/
+            owner: www-data
+            group: www-data
+            mode: 0755
+        notify: Restart nginx
+
+  handlers:
+      - name: Restart nginx
+        service:
+            name: nginx
+            state: restarted

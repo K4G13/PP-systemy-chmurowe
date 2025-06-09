@@ -1,0 +1,85 @@
+- hosts: all
+  become: true
+  become_method: sudo
+  vars:
+      postgres_user: postgres
+      postgres_password: postgres
+      db_name: kaggle_data
+
+  tasks:
+      - name: Update apt cache
+        apt:
+            update_cache: yes
+
+      - name: Install PostgreSQL
+        apt:
+            name:
+                - postgresql
+                - postgresql-contrib
+            state: present
+
+      - name: Get PostgreSQL version
+        command: psql -V
+        register: pg_version_raw
+
+      - name: Set PostgreSQL version fact
+        set_fact:
+            pg_version: "{{ (pg_version_raw.stdout.split(' ')[2]).split('.')[0] }}"
+
+      - name: Set password for PostgreSQL user
+        shell: sudo -u postgres psql -c "ALTER USER {{ postgres_user }} WITH PASSWORD '{{ postgres_password }}';"
+        args:
+            executable: /bin/bash
+
+      - name: Create PostgreSQL database
+        shell: sudo -u postgres createdb {{ db_name }}
+        args:
+            executable: /bin/bash
+        ignore_errors: yes
+
+      - name: Allow remote connections by modifying postgresql.conf
+        lineinfile:
+            path: /etc/postgresql/{{ pg_version }}/main/postgresql.conf
+            regexp: "^#?listen_addresses ="
+            line: "listen_addresses = '*'"
+        notify: Restart PostgreSQL
+
+      - name: Allow md5 authentication for all users
+        lineinfile:
+            path: /etc/postgresql/{{ pg_version }}/main/pg_hba.conf
+            line: "host    all             all             all                     md5"
+            create: yes
+        notify: Restart PostgreSQL
+
+      - name: Install Python3 and pip
+        apt:
+            name:
+                - python3
+                - python3-pip
+            state: present
+
+      - name: Install psycopg2 for Python
+        pip:
+            name: psycopg2-binary
+            executable: pip3
+
+      - name: Install pandas for Python
+        pip:
+            name: pandas
+            executable: pip3
+
+      - name: Install SQLAlchemy for Python
+        pip:
+            name: sqlalchemy
+            executable: pip3
+
+      - name: Run populate_db.py
+        command: python3 populate_db.py
+        args:
+            chdir: /home/vagrant/data
+
+  handlers:
+      - name: Restart PostgreSQL
+        service:
+            name: postgresql
+            state: restarted

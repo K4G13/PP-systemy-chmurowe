@@ -2,7 +2,7 @@ import axios from 'axios';
 import { table_data, table_data_loading } from '$lib/stores/table_data.store';
 import { toast } from 'svelte-sonner';
 
-const API_HOST = import.meta.env.VITE_API_HOST || 'localhost';
+const API_HOST = import.meta.env.VITE_API_HOST || '192.168.56.41';
 const API_PORT = import.meta.env.VITE_API_PORT || '3000';
 const API_BASE_URL = `http://${API_HOST}:${API_PORT}`;
 

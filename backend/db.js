@@ -3,7 +3,7 @@ require("dotenv").config();
 
 const user = process.env.DB_USER || "postgres";
 const password = process.env.DB_PASSWORD || "postgres";
-const host = process.env.DB_HOST || "localhost";
+const host = process.env.DB_HOST || "192.168.56.40";
 const port = process.env.DB_PORT || 5432;
 const database = process.env.DB_NAME || "kaggle_data";
 

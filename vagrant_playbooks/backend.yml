@@ -1,0 +1,27 @@
+- hosts: all
+  become: yes
+  tasks:
+      - name: Install curl
+        apt:
+            name: curl
+            state: present
+            update_cache: yes
+
+      - name: Add NodeSource Node.js 18.x repo
+        shell: curl -fsSL https://deb.nodesource.com/setup_18.x | bash -
+        args:
+            executable: /bin/bash
+
+      - name: Install Node.js 18
+        apt:
+            name: nodejs
+            state: present
+
+      - name: Install screen
+        package:
+            name: screen
+            state: present
+
+      - name: Run server in screen session
+        shell: screen -dmS node-server node /vagrant/backend/index.js
+        become_user: vagrant
