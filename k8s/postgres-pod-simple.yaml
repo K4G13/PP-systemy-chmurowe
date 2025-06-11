@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: postgres-pod
+  labels:
+    app: database
+spec:
+  containers:
+    - name: postgres
+      image: database:latest
+      env:
+        - name: POSTGRES_DB
+          value: "addiction_db"
+        - name: POSTGRES_USER
+          value: "postgres"
+        - name: POSTGRES_PASSWORD
+          value: "password123"
+      ports:
+        - containerPort: 5432
+      imagePullPolicy: Never

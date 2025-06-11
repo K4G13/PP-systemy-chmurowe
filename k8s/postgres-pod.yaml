@@ -1,0 +1,58 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: postgres-pod
+    labels:
+        app: postgres
+spec:
+    volumes:
+        - name: postgres-storage
+          persistentVolumeClaim:
+              claimName: postgres-pvc
+        - name: init-script
+          configMap:
+              name: postgres-init-script
+        - name: csv-data
+          configMap:
+              name: postgres-csv-data
+    containers:
+        - name: postgres
+          image: postgres:13
+          ports:
+              - containerPort: 5432
+                name: postgres
+          env:
+              - name: POSTGRES_DB
+                value: addiction_db
+              - name: POSTGRES_USER
+                value: postgres
+              - name: POSTGRES_PASSWORD
+                value: password123
+          volumeMounts:
+              - mountPath: /var/lib/postgresql/data
+                name: postgres-storage
+              - mountPath: /docker-entrypoint-initdb.d/01-create-and-populate.sql
+                name: init-script
+                subPath: 01-create-and-populate.sql
+              - mountPath: /docker-entrypoint-initdb.d/addiction_population_data.csv
+                name: csv-data
+                subPath: addiction_population_data.csv
+          livenessProbe:
+              exec:
+                  command:
+                      - pg_isready
+                      - -U
+                      - postgres
+              initialDelaySeconds: 30
+              timeoutSeconds: 5
+              periodSeconds: 10
+              failureThreshold: 3
+          readinessProbe:
+              exec:
+                  command:
+                      - pg_isready
+                      - -U
+                      - postgres
+              initialDelaySeconds: 5
+              timeoutSeconds: 5
+              periodSeconds: 5
